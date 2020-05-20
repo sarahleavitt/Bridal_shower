@@ -37,145 +37,179 @@ ui <- dashboardPage(skin = "yellow",
     
     tabsetPanel(
       
-      tabPanel(games[1],
+      tabPanel("Bride or Groom? Guess Who Said It",
                
                br(),
                fluidRow(
                  column(4,
                    imageOutput("card1", height = 600)
                  ),
+                 br(),
                  box(
                    title = "Correct Answers",
+                   status = "success",
+                   solidHeader = TRUE,
                    tableOutput("key1"),
-                   width = 4
+                   width = 4,
                    )
                  ),
+               br(),
                br(),
                  
                  fluidRow(
                    box(
-                     title = "Guest Answers",
-                     girafeOutput("plot1", height = 800),
+                     girafeOutput("plot1"),
                      width = 9
                    ),
+                   br(),
                    box(
                      title = "Guest Scores",
+                     status = "success",
+                     solidHeader = TRUE,
                      tableOutput("table1"),
                      width = 3
                    )
                  )
                ),
       
-      tabPanel(games[2],
+      tabPanel("Emoji Pictionary",
                
                br(),
                fluidRow(
                  column(4,
                         imageOutput("card2", height = 600)
                  ),
+                 br(),
                  box(
                    title = "Correct Answers",
+                   status = "success",
+                   solidHeader = TRUE,
                    tableOutput("key2"),
                    width = 3
                  )
                ),
                br(),
+               br(),
                
                fluidRow(
                  box(
-                   title = "Guest Answers",
-                   girafeOutput("plot2", height = 1000),
+                   girafeOutput("plot2"),
                    width = 9
                  ),
+                 br(),
                  box(
                    title = "Guest Scores",
+                   status = "success",
+                   solidHeader = TRUE,
                    tableOutput("table2"),
                    width = 3
                  )
                )
       ),
 
-      tabPanel(games[3],
+      tabPanel("How Old was the Bride-to-be?",
                
                br(),
                fluidRow(
                  column(4,
                         imageOutput("card3", height = 600)
                  ),
+                 br(),
                  box(
                    title = "Correct Answers",
+                   status = "success",
+                   solidHeader = TRUE,
                    tableOutput("key3"),
-                   width = 2
+                   width = 3
+                 ),
+                 br(),
+                 column(5,
+                        imageOutput("how_old", height = 600)
                  )
                ),
+               br(),
                br(),
                
                fluidRow(
                  box(
-                   title = "Guest Answers",
-                   girafeOutput("plot3", height = 1000),
+                   girafeOutput("plot3"),
                    width = 9
                  ),
+                 br(),
                  box(
                    title = "Guest Scores",
+                   status = "success",
+                   solidHeader = TRUE,
                    tableOutput("table3"),
                    width = 3
                  )
                )
       ),
 
-      tabPanel(games[4],
+      tabPanel("How Well Do You Know the Bride?",
                
                br(),
                fluidRow(
                  column(4,
                         imageOutput("card4", height = 600)
                  ),
+                 br(),
                  box(
                    title = "Correct Answers",
+                   status = "success",
+                   solidHeader = TRUE,
                    tableOutput("key4"),
                    width = 4
                  )
                ),
                br(),
+               br(),
                
                fluidRow(
                  box(
-                   title = "Guest Answers",
-                   girafeOutput("plot4", height = 1500),
+                   girafeOutput("plot4"),
                    width = 9
                  ),
+                 br(),
                  box(
                    title = "Guest Scores",
+                   status = "success",
+                   solidHeader = TRUE,
                    tableOutput("table4"),
                    width = 3
                  )
                )
       ),
 
-      tabPanel(games[5],
+      tabPanel("Would She Rather?",
                
                br(),
                fluidRow(
                  column(4,
                         imageOutput("card5", height = 600)
                  ),
+                 br(),
                  box(
                    title = "Correct Answers",
+                   status = "success",
+                   solidHeader = TRUE,
                    tableOutput("key5"),
                    width = 4
                  )
                ),
                br(),
+               br(),
                
                fluidRow(
                  box(
-                   title = "Guest Answers",
-                   girafeOutput("plot5", height = 600),
+                   girafeOutput("plot5"),
                    width = 8
                  ),
+                 br(),
                  box(
                    title = "Guest Scores",
+                   status = "success",
+                   solidHeader = TRUE,
                    tableOutput("table5"),
                    width = 4
                  )
@@ -183,11 +217,25 @@ ui <- dashboardPage(skin = "yellow",
       ),
       
       tabPanel("Wishes and Advice",
+               
+               br(),
                fluidRow(
+                 column(5,
+                        imageOutput("advice_1", height = 450)
+                 ),
+                 column(4,
+                        imageOutput("advice_2", height = 450)
+                 ),
+               ),
+               
+               fluidRow(
+                 
                  box(
                    title = "Wishes and Advice",
+                   status = "success",
+                   solidHeader = TRUE,
                    tableOutput("advice"),
-                   width = 10
+                   width = 9
                  )  
                )
       )
@@ -202,7 +250,24 @@ server <- function(input, output) {
   cards <- c("Bride_Groom.jpg", "Pictionary.jpg", "How_old.jpg",
              "How_well.jpg", "Would_she_rather.jpg")
   
+  ## ADVICE
   output$advice <- renderTable(adviceTab)
+  
+  output$advice_1 <- renderImage({
+    return(list(src = "./Advice_graphic_1.jpg",
+                alt = "Advice graphic 1",
+                height = 400))
+    
+  }, deleteFile = FALSE)
+  
+  output$advice_2 <- renderImage({
+    return(list(src = "./Advice_graphic_2.jpg",
+                alt = "Advice graphic 2",
+                height = 400))
+    
+  }, deleteFile = FALSE)
+  
+  
   
   ## GAME 1  
   output$plot1 <- renderGirafe({
@@ -257,6 +322,13 @@ server <- function(input, output) {
   
   output$key3 <- renderTable(key_print[key_print$Game == games[3],
                                        c("Question", "Correct Answer")])
+  
+  output$how_old <- renderImage({
+    return(list(src = "./How_old_graphic.png",
+                alt = "How old graphic",
+                height = 600))
+    
+  }, deleteFile = FALSE)
   
   
   ## GAME 4
