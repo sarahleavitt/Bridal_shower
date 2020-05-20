@@ -18,7 +18,8 @@ clean_results <- function(source){
   
   advice <- clean2 %>%
     select(Guest, Advice, Advice_display) %>%
-    replace_na(list(Advice_display = "No"))
+    replace_na(list(Advice_display = "No")) %>%
+    filter(!is.na(Advice))
   
   long <- clean2 %>%
     select(-Email, -Timestamp, -Advice, -Advice_display, -Score) %>%
@@ -85,6 +86,8 @@ clean_results <- function(source){
   scores2 <- scores %>%
     full_join(winners, by = c("Game", "Guest", "Points")) %>%
     replace_na(list(Winner = ""))
+  
+  write.csv(advice, "../advice.csv", row.names = FALSE)
   
   return(list(answers, scores2, key_print, advice))
 }
