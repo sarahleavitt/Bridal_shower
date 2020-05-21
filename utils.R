@@ -1,6 +1,25 @@
 
-clean_results <- function(source){
-  raw <- sheets_read(source, sheet = "Responses")
+reload_source <- function(){
+  if (!require('dplyr')) install.packages('dplyr'); library('dplyr')
+  if (!require('tidyr')) install.packages('tidyr'); library('tidyr')
+  if (!require('ggplot2')) install.packages('ggplot2'); library('ggplot2')
+  if (!require('naniar')) install.packages('naniar'); library('naniar')
+  if (!require('shiny')) install.packages('shiny'); library('shiny')
+  if (!require('shinydashboard')) install.packages('shinydashboard'); library('shinydashboard')
+  if (!require('DT')) install.packages('DT'); library('DT')
+  if (!require('ggiraph')) install.packages('ggiraph'); library('ggiraph')
+  if (!require('scales')) install.packages('scales'); library('scales')
+  if (!require('googlesheets4')) install.packages('googlesheets4'); library('googlesheets4')
+  
+  source("utils.R")
+}
+
+
+
+clean_results <- function(source = "1ti-CttrCvS_pslaOyO3fHaDduVxGTtzUDz5yE9E_lpg"){
+  
+  gs4_deauth()
+  raw <- read_sheet(source, sheet = "Responses")
   
   clean1 <- raw %>%
     rename(Email = `Email Address`,
@@ -41,10 +60,9 @@ clean_results <- function(source){
     select(Game, Question, Answer) %>%
     filter(!duplicated(Answer))
   
-  write_sheet(how_well, source, sheet = "How_well")
   
   # Reading in key to complex answers
-  key_complex <- sheets_read(source, sheet = "Key")
+  key_complex <- read_sheet(source, sheet = "Key")
   
   key <- long %>%
     filter(Answer_key == TRUE) %>%
@@ -87,9 +105,7 @@ clean_results <- function(source){
     full_join(winners, by = c("Game", "Guest", "Points")) %>%
     replace_na(list(Winner = ""))
   
-  write.csv(advice, "../advice.csv", row.names = FALSE)
-  
-  return(list(answers, scores2, key_print, advice))
+  return(list(answers, scores2, key_print, advice, how_well))
 }
 
 
@@ -122,7 +138,7 @@ createPlot <- function(df, game){
 }
 
 
-new_lines_adder = function(test.string, interval) {
+new_lines_adder <- function(test.string, interval) {
   #split at spaces
   string.split = strsplit(test.string," ")[[1]]
   # get length of snippets, add one for space
@@ -138,13 +154,33 @@ new_lines_adder = function(test.string, interval) {
   return(result)
 }
 
-add_newlines = function(x, interval) {
+add_newlines <- function(x, interval) {
   
   # make sure, x is a character array   
   x = as.character(x)
   # apply splitter to each
   t = sapply(x, FUN = new_lines_adder, interval = interval,USE.NAMES=FALSE)
   return(t)
+}
+
+save_results <- function(source = "1ti-CttrCvS_pslaOyO3fHaDduVxGTtzUDz5yE9E_lpg"){
+  
+  clean <- clean_results()
+  
+  answers <- clean[[1]]
+  scores <- clean[[2]]
+  key_print <- clean[[3]]
+  advice <- clean[[4]] %>% select(-Advice_display)
+  how_well <- clean[[5]]
+  
+  write.csv(answers, "../shower_answers.csv", row.names = FALSE)
+  write.csv(scores, "../shower_scores.csv", row.names = FALSE)
+  write.csv(key_print, "../shower_key.csv", row.names = FALSE)
+  write.csv(advice, "../shower_advice.csv", row.names = FALSE)
+  
+  gs4_auth()
+  write_sheet(how_well, source, sheet = "How_well")
+  
 }
 
 

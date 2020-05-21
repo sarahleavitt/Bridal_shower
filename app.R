@@ -1,16 +1,10 @@
-library(shinydashboard)
-library(shiny)
-library(DT)
-library(tidyr)
-library(dplyr)
-library(ggplot2)
-library(scales)
 
-setwd("~/Michelle's Shower/Bridal_shower")
+#Loading packages and functions
+reload_source()
 
-source <- "1ti-CttrCvS_pslaOyO3fHaDduVxGTtzUDz5yE9E_lpg"
+#Getting survey data and cleaning it
+clean <- clean_results()
 
-clean <- clean_results(source)
 answers <- clean[[1]]
 scores <- clean[[2]]
 key_print <- clean[[3]]
@@ -18,7 +12,6 @@ advice <- clean[[4]]
 
 answers$Question <- gsub("\n$", "", add_newlines(answers$Question, 30))
 answers$Answer <- gsub("\n$", "", add_newlines(answers$Answer, 20))
-answers$Guest <- gsub("\n$", "", add_newlines(answers$Guest, 30))
 
 adviceTab <- advice %>%
   filter(Advice_display == "Yes") %>%
