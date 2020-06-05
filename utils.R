@@ -10,6 +10,7 @@ reload_source <- function(){
   if (!require('ggiraph')) install.packages('ggiraph'); library('ggiraph')
   if (!require('scales')) install.packages('scales'); library('scales')
   if (!require('googlesheets4')) install.packages('googlesheets4'); library('googlesheets4')
+  if (!require('rsconnect')) install.packages('rsconnect'); library('rsconnect')
   
   source("utils.R")
 }
@@ -191,4 +192,4 @@ save_results <- function(source = "1ti-CttrCvS_pslaOyO3fHaDduVxGTtzUDz5yE9E_lpg"
 }
 
 
-
+#deployApp()

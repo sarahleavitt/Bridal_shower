@@ -1,5 +1,6 @@
 
 #Loading packages and functions
+source("utils.R")
 reload_source()
 
 #Getting survey data and cleaning it
