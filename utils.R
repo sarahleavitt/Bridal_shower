@@ -40,6 +40,8 @@ clean_results <- function(source = "1ti-CttrCvS_pslaOyO3fHaDduVxGTtzUDz5yE9E_lpg
     replace_na(list(Advice_display = "No")) %>%
     filter(!is.na(Advice))
   
+  missString <- "no clue|idk|i don't remember|????|great question!"
+  
   long <- clean2 %>%
     select(-Email, -Timestamp, -Advice, -Advice_display, -Score) %>%
     pivot_longer(c(-Answer_key, -Name, -Relation, -Guest), names_to = "Question", values_to = "Answer") %>%
@@ -52,6 +54,7 @@ clean_results <- function(source = "1ti-CttrCvS_pslaOyO3fHaDduVxGTtzUDz5yE9E_lpg
            Answer = ifelse(Game %in% c("How Well Do You Know the Bride?",
                                        "Emoji Pictionary"), gsub(",", "", tolower(Answer)), Answer),
            Answer = ifelse(Answer == "bride-to-be", "bride to be", Answer),
+           Answer = gsub(missString, "", Answer),
            Number = as.numeric(gsub("[^0-9]", "", Question)))
   
   how_well <- long %>%
@@ -90,10 +93,13 @@ clean_results <- function(source = "1ti-CttrCvS_pslaOyO3fHaDduVxGTtzUDz5yE9E_lpg
     summarize(Points = n()) %>%
     arrange(Game, desc(Points))
   
+  hosts <- c("Sarah Leavitt (Sister)", "Julia (Sister in-law)", "Mommy!", "Grandma")
+  
   # Finding winners
   winnerID <- scores %>%
     group_by(Game) %>%
-    slice(1:2) %>%
+    filter(!Guest %in% hosts) %>%
+    slice(1) %>%
     select(Game, Points) %>%
     unique(.)
   
@@ -103,6 +109,7 @@ clean_results <- function(source = "1ti-CttrCvS_pslaOyO3fHaDduVxGTtzUDz5yE9E_lpg
   
   scores2 <- scores %>%
     full_join(winners, by = c("Game", "Guest", "Points")) %>%
+    mutate(Winner = ifelse(Guest %in% hosts, "Host", Winner)) %>%
     replace_na(list(Winner = ""))
   
   return(list(answers, scores2, key_print, advice, how_well))
