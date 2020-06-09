@@ -41,7 +41,7 @@ clean_results <- function(source = "1ti-CttrCvS_pslaOyO3fHaDduVxGTtzUDz5yE9E_lpg
     replace_na(list(Advice_display = "No")) %>%
     filter(!is.na(Advice))
   
-  missString <- "no clue|idk|i don't remember|????|great question!"
+  missString <- "no clue|idk|i don't remember|\\?\\?\\?\\?|\\?\\?\\?|great question\\!|no idea"
   
   long <- clean2 %>%
     select(-Email, -Timestamp, -Advice, -Advice_display, -Score) %>%
@@ -55,8 +55,10 @@ clean_results <- function(source = "1ti-CttrCvS_pslaOyO3fHaDduVxGTtzUDz5yE9E_lpg
            Answer = ifelse(Game %in% c("How Well Do You Know the Bride?",
                                        "Emoji Pictionary"), gsub(",", "", tolower(Answer)), Answer),
            Answer = ifelse(Answer == "bride-to-be", "bride to be", Answer),
-           Answer = gsub(missString, "", Answer),
-           Number = as.numeric(gsub("[^0-9]", "", Question)))
+           Number = as.numeric(gsub("[^0-9]", "", Question))) %>%
+    mutate(Answer = gsub(missString, "", Answer)) %>%
+    replace_with_na(list(Answer = ""))
+    
   
   how_well <- long %>%
     filter(Game == "How Well Do You Know the Bride?") %>%
@@ -66,7 +68,8 @@ clean_results <- function(source = "1ti-CttrCvS_pslaOyO3fHaDduVxGTtzUDz5yE9E_lpg
   
   
   # Reading in key to complex answers
-  key_complex <- read_sheet(source, sheet = "Key")
+  key_complex <- read_sheet(source, sheet = "Key") %>%
+    mutate(Key = as.character(Key))
   
   key <- long %>%
     filter(Answer_key == TRUE) %>%

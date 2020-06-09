@@ -284,7 +284,7 @@ server <- function(input, output) {
   ## GAME 2
   output$plot2 <- renderGirafe({
     gg <- createPlot(answers, games[2])
-    girafe(ggobj = gg, pointsize = 14, width_svg = 15, height_svg = 15)
+    girafe(ggobj = gg, pointsize = 14, width_svg = 15, height_svg = 28)
   })
   output$table2 <- renderTable(scores[scores$Game == games[2],
                                       c("Guest", "Points", "Winner")])
@@ -328,7 +328,7 @@ server <- function(input, output) {
   ## GAME 4
   output$plot4 <- renderGirafe({
     gg <- createPlot(answers, games[4])
-    girafe(ggobj = gg, pointsize = 14, width_svg = 15, height_svg = 15)
+    girafe(ggobj = gg, pointsize = 14, width_svg = 15, height_svg = 35)
   })
   output$table4 <- renderTable(scores[scores$Game == games[4],
                                       c("Guest", "Points", "Winner")])
